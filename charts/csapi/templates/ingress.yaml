@@ -1,0 +1,60 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "csapi.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "csapi.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hosts.host }}
+        - {{ .Values.ingress.hosts.authhost }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  rules:
+    - host: {{ .Values.ingress.hosts.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.hosts.apipath }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "csapi.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+          - path: {{ .Values.ingress.hosts.staticpath }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.uiname }}
+                port: 
+                  number: {{ .Values.service.uiport }}
+    - host: {{ .Values.ingress.hosts.authhost }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.hosts.apipath }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "csapi.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+          - path: {{ .Values.ingress.hosts.staticpath }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.service.uiname }}
+                port: 
+                  number: {{ .Values.service.uiport }}
+            {{- end }}

@@ -1,0 +1,107 @@
+# Default 1001 for control-center.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  # repository: gcr.io/s4-project-202316/success4/control-center
+  repository: phx.ocir.io/axk4nd7kqcb4/control-center
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart version.
+  # tag: "f683fd923d1193e9147fb9c35108d61aa47a630b"
+  tag: "dev"
+
+imagePullSecrets:
+- name: ocirsecret
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+configmap:
+  db_host:
+    secretRef:
+      name: database-secret
+      key: host
+  db_name:
+    secretRef:
+      name: database-secret
+      key: name
+  db_user:
+    secretRef:
+      name: database-secret
+      key: user
+  db_password:
+    secretRef:
+      name: database-secret
+      key: password
+
+  # cc_auth_user: guest
+  # cc_port: 5000
+  # cc_host: 0.0.0.0
+  # cc_job_store_url: \"postgresql+psycopg2://postgres:Dfo5odcdfE4M5dkXTnWpaTRCYrCuhq@success4.ckilgakpknba.us-east-2.rds.amazonaws.com/success4\"
+  # cc_job_store_url: postgresql+psycopg2://postgres:DfQkiKe95W@postgresql-dev-postgres-db.dev.svc.cluster.local/postgres
+  cc_job_store_url: postgresql+psycopg2://postgres:EdUBRDralc@postgresql-postgres-dev.dev.svc.cluster.local/postgres

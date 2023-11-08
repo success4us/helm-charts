@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: "{{ .Release.Name }}"
+spec:
+  schedule: {{ .Values.cronSchedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: phx.ocir.io/axk4nd7kqcb4/psql-cronjob:latest
+            env:
+              - name: PGHOST
+                valueFrom:
+                    secretKeyRef:
+                      key: db_host
+                      name: database-secret
+              - name: PGPORT
+                valueFrom:
+                    secretKeyRef:
+                      key: db_port
+                      name: database-secret
+              - name: PGDATABASE
+                valueFrom:
+                    secretKeyRef:
+                      key: db_name
+                      name: database-secret
+              - name: PGUSER
+                valueFrom:
+                    secretKeyRef:
+                      key: db_username
+                      name: database-secret
+              - name: PGPASSWORD
+                valueFrom:
+                    secretKeyRef:
+                      key: db_password
+                      name: database-secret
+            command: ["/bin/sh", "-c"]
+            args:
+              - |
+                timestamp=$(date +%Y-%m-%d-%H-%M%S)
+                objectName="backup_${timestamp}.sql" 
+                touch /tmp/backup.sql                           
+                echo $PGPASSWORD | pg_dump -h $PGHOST -U $PGUSER -d $PGDATABASE -p $PGPORT > /tmp/backup.sql      
+                oci os object put --bucket-name {{ .Values.oci.bucketName }} --file /tmp/backup.sql --name {{ .Values.env }}/$objectName  --region {{ .Values.oci.region }}
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: ocirsecret
+       
+      
+

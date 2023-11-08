@@ -1,0 +1,14 @@
+env:
+  normal:
+    BUILDRUN_HASH: value1
+
+image:
+  repository: phx.ocir.io/axk4nd7kqcb4/csui
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart version.
+  tag: "ojvhbva"
+
+imagePullSecrets:
+- name: ocirsecret
+nameOverride: ""
+fullnameOverride: ""

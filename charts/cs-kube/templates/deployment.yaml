@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cs-kube.fullname" . }}
+  labels:
+    {{- include "cs-kube.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "cs-kube.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "cs-kube.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cs-kube.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash","/master.sh"]
+          ports:
+            - containerPort: 7077
+            - containerPort: 8080
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: db_password
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_name
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_port
+            - name: SPARK_MODE
+              value: cluster
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: csapienv
+              #     key: spark_mode
+            - name: MINIO_END_POINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  minio_end_point_url
+            # - name: ES_HOST
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: elasticsearch-configmap
+            #       key:  es_host
+            # - name: ES_PORT
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: elasticsearch-configmap
+            #       key:  es_port
+            - name: BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  broker_url
+            - name: CELERY_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  celery_backend
+            - name: KAFKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: kafka_url
+                  name: csapi-configmap
+            - name: KAFKA_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: kafka_port
+                  name: csapi-configmap
+            - name: SPARK_CLUSTER
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: spark_cluster
+            - name: RABBITMQ_SERVICE_SERVICE_HOST
+              value: rabbitmq
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

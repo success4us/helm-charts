@@ -1,0 +1,11 @@
+
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+  redis:
+    password: ""

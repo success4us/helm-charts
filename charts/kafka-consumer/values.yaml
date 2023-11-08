@@ -1,0 +1,106 @@
+# Default values for csapi.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+
+image:
+  repository: gcr.io/s4-project-202316/success4/kafka-consumer
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart version.
+  tag: "c5f1939f3545270695f4dd10fa175bd48e03a908"
+
+imagePullSecrets:
+- name: gcrkey
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8000
+  uiname: csui
+  uiport: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+  
+    
+  tls: []
+        # hosts:
+        #  - kafka-consumer.success4.us
+        #  - auth.kafka-consumer.success4.us
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+email: support@success4.us
+
+configmap:
+  broker_url: amqp://user:QxdId1hcQo@rabbitmq:5672
+  backend_url: rpc://
+  cc_url: http://control-center/scheduler/
+  celery_backend: rpc://
+  db_engine: tenant_schemas.postgresql_backend
+  host_domain: success4.us
+  org_name: self05company
+  schema_name: success4
+  spark_cluster: --master spark:spark-master:7077
+  spark_mode: remote
+  utils_path: /cs4/utils/
+  ip_whitelist_range: 10.0.0.0/8
+  environment: prod
+  kafka_url: kafka
+  kafka_port: \"9092\"
+  connection_timeout: _connection_timeout_
+  statement_timeout: _statement_timeout_
+  redis_host: redis-master
+  redis_port: \"6379\"
+  cache_ttl: \"15\"
+  connection_max_age: \"60\"
+  es_host: elasticsearch-master
+  es_port: \"9200\"
+  version: "latest" 

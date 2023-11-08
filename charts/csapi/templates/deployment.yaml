@@ -1,0 +1,242 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "csapi.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "csapi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "csapi.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "csapi.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: db_username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: db_password
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_name
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key:  db_port
+            - name: DB_ENGINE
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  db_engine
+            - name: HOST_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  host_domain
+            - name: IDP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  idp_server
+            - name: SSO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  sso_url
+            - name: ORG_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  org_name
+            - name: SCHEMA_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  schema_name
+            - name: ES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: elasticsearch-configmap
+                  key:  es_host
+            - name: ES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: elasticsearch-configmap
+                  key:  es_port
+            - name: BROKER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  broker_url
+            - name: CELERY_BACKEND
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  celery_backend
+            - name: MINIO_END_POINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key:  minio_end_point_url
+            - name: MINIO_BROWSER_ENDPOINT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: minio_browser_endpoint_url
+            - name: CONTROL_CENTER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: control-center-configmap
+                  key: CC_AUTH_USER
+            - name: CONTROL_CENTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: control-center-secret
+                  key: CC_AUTH_PASSWORD
+            - name: CONTROL_CENTER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: cc_url
+            - name: SPARK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: spark_mode
+            - name: SPARK_CLUSTER
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: spark_cluster
+            - name: BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: backend_url
+            - name: IP_WHITELIST_RANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: ip_whitelist_range
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: environment
+            - name: KAFKA_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: kafka_url
+            - name: KAFKA_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: kafka_port
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: redis_password
+            - name: COUNTLY_APP_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: countly_app_key
+            - name: CONNECTION_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: connection_timeout
+            - name: STATEMENT_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: statement_timeout
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: redis_port
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: redis_host
+            - name: CONNECTION_MAX_AGE
+              valueFrom:
+                configMapKeyRef:
+                  name: csapi-configmap
+                  key: connection_max_age
+            - name: UI_MODE
+              value: prod
+            - name: WORKINGENV
+              value: prod
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 30
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

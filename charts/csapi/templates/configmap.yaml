@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: csapi-configmap
+data:
+  broker_url: "{{ .Values.configmap.broker_url }}"
+  backend_url: "{{ .Values.configmap.backend_url }}"
+  cc_url: "{{ .Values.configmap.cc_url }}"
+  celery_backend: "{{ .Values.configmap.celery_backend }}"
+  db_engine: "{{ .Values.configmap.db_engine }}"
+  host_domain: "{{ .Values.configmap.host_domain }}"
+  idp_server: "{{ .Values.configmap.idp_server }}"
+  org_name: "{{ .Values.configmap.org_name }}"
+  schema_name: "{{ .Values.configmap.schema_name }}"
+  spark_cluster: "{{ .Values.configmap.spark_cluster }}"
+  spark_mode: "{{ .Values.configmap.spark_mode }}"
+  sso_url: "{{ .Values.configmap.sso_url }}"
+  utils_path: "{{ .Values.configmap.utils_path }}"
+  minio_end_point_url: "{{ .Values.configmap.minio_end_point_url }}"
+  minio_browser_endpoint_url: "{{ .Values.configmap.minio_browser_endpoint_url }}"
+  ip_whitelist_range: "{{ .Values.configmap.ip_whitelist_range }}"
+  environment: "{{ .Values.configmap.environment }}"
+  kafka_url: "{{ .Values.configmap.kafka_url }}"
+  countly_app_key: "{{ .Values.configmap.countly_app_key }}"
+  kafka_port: "{{ .Values.configmap.kafka_port }}"
+  connection_timeout: "{{ .Values.configmap.connection_timeout }}"
+  statement_timeout: "{{ .Values.configmap.statement_timeout }}"
+  redis_host: "{{ .Values.configmap.redis_host }}"
+  redis_port: "{{ .Values.configmap.redis_port }}"
+  connection_max_age: "{{ .Values.configmap.connection_max_age }}"

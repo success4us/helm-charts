@@ -1,0 +1,10 @@
+---
+cronSchedule: "0 0,12 * * *"
+env: dev
+oci:
+  bucketName: psql-backup-bucket-dev
+  fingerprint: 47:1e:08:0c:5b:29:18:ab:eb:9c:31:60:bd:2a:95:ef
+  keyFile: YOUR_PRIVATE_KEY_PATH
+  region: us-phoenix-1
+  tenancyOCID: ocid1.tenancy.oc1..aaaaaaaazkx52kj6nq7ly6wcinvvlpwluwtizu7fowtncpg4gp4gx767hekq
+  userOCID: ocid1.user.oc1..aaaaaaaaz5hz7ytykltzh4twqgjyqherorw4syoga737l4kz6rnxo4u7idsa

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: letsencrypt-poc
+  namespace: poc
+spec:
+  dnsNames:
+    - demo.decisionminds.com
+    - auth.demo.decisionminds.com
+  secretName: letsencrypt-poc
+  issuerRef:
+    name: letsencrypt-poc
+    kind: ClusterIssuer

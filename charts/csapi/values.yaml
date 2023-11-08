@@ -1,0 +1,127 @@
+# Default values for csapi.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: phx.ocir.io/axk4nd7kqcb4/csapi
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart version.
+  tag: "dev"
+imagePullSecrets:
+- name: ocirsecret
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8000
+  uiname: csui
+  uiport: 80
+
+ingress:
+  enabled: true
+  annotations: 
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m    
+    certmanager.k8s.io/cluster-issuer: letsencrypt-cluster-issuer
+    nginx.ingress.kubernetes.io/proxy-read-timeout: 1800s
+    nginx.ingress.kubernetes.io/proxy-send-timeout: 1800s  
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: 120s
+    nginx.ingress.kubernetes.io/server-snippet: |-
+      location ~* "^/metrics" {
+          deny all;
+          return 403;
+      }
+
+  hosts:
+    host: dev.success4.us
+    apipath: /
+    staticpath: /static
+    authhost: auth.dev.success4.us
+    
+  tls:  
+  - hosts:
+      - dev.success4.us
+      - auth.dev.success4.us
+    secretName: csapi-app-tls
+        # hosts:
+        #  - s4.dev.cs1.io
+        #  - auth.dev.cs1.io
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 3Gi
+  # requests:
+  #   cpu: 100m
+  #   memory: 1Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+email: dev@success4.io
+
+configmap:
+  broker_url: "amqp://user:QxdId1hcQo@rabbitmq:5672"
+  backend_url: "rpc://"
+  cc_url: "http://control-center/scheduler/"
+  celery_backend: "rpc://"
+  db_engine: "tenant_schemas.postgresql_backend"
+  host_domain: "success4.us"
+  idp_server: "https://auth.dev.success4.us/login"
+  org_name: "self05company"
+  schema_name: "success4"
+  spark_cluster: "--master spark:spark-master:7077"
+  spark_mode: "remote"
+  sso_url: "https://auth.dev.success4.us"
+  utils_path: "/cs4/utils/"
+  minio_end_point_url: "https://dev.minio.success4.us"
+  minio_browser_endpoint_url: "https://dev.minio.success4.us"
+  ip_whitelist_range: "10.0.0.0/8"
+  environment: "prod"
+  kafka_url: "kafka"
+  kafka_port: \"9092\"  
+  connection_timeout: \"180\"
+  redis_host: "redis-master"
+  redis_port: \"6379\"
+  connection_max_age: \"180\"
+  cache_ttl: \"15\"
+  version: "_tag_"
+  countly_app_key: "_countlyappkey_"

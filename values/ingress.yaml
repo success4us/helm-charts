@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-app
+  namespace: default
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - dev.success4.us
+    - auth.dev.success4.us
+    secretName: csapi-app-tls
+  rules:
+  - host: dev.success4.us
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: ingress-service
+            port:
+              number: 80

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: creditunion-certificate
+  namespace: creditunion
+spec:
+  dnsNames:
+    - creditunion.success4.us
+    - auth.creditunion.success4.us
+  secretName: creditunion-certificate
+  issuerRef:
+    name: creditunion-ssl
+    kind: ClusterIssuer

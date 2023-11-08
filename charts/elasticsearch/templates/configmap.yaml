@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-configmap
+data:
+  es_host: elasticsearch-master
+  es_port: "9200"

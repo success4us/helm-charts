@@ -1,0 +1,27 @@
+image:
+  repository: phx.ocir.io/axk4nd7kqcb4/control-center
+  pullPolicy: Always
+  tag: "qwcjfta"
+
+imagePullSecrets:
+- name: ocirsecret
+
+configmap:
+  db_host:
+    secretRef:
+      name: database-secret
+      key: host
+  db_name:
+    secretRef:
+      name: database-secret
+      key: name
+  db_user:
+    secretRef:
+      name: database-secret
+      key: user
+  db_password:
+    secretRef:
+      name: database-secret
+      key: password
+      
+  cc_job_store_url: postgresql+psycopg2://postgres:EdUBRDralc@postgresql-postgres-dev.dev.svc.cluster.local/postgres

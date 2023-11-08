@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-consumer-configmap
+data:
+  broker_url: {{ .Values.configmap.broker_url }}
+  backend_url: {{ .Values.configmap.backend_url }}
+  cc_url: {{ .Values.configmap.cc_url }}
+  celery_backend: {{ .Values.configmap.celery_backend }}
+  db_engine: {{ .Values.configmap.db_engine }}
+  host_domain: {{ .Values.configmap.host_domain }}
+  org_name: {{ .Values.configmap.org_name }}
+  schema_name: {{ .Values.configmap.schema_name }}
+  spark_cluster: {{ .Values.configmap.spark_cluster }}
+  spark_mode: {{ .Values.configmap.spark_mode }}
+  utils_path: {{ .Values.configmap.utils_path }}
+  ip_whitelist_range: {{ .Values.configmap.ip_whitelist_range }}
+  environment: {{ .Values.configmap.environment }}
+  kafka_url: {{ .Values.configmap.kafka_url }}
+  kafka_port: "9092"
+  connection_timeout: "40"
+  statement_timeout: "30000"
+  redis_host: {{ .Values.configmap.redis_host }}
+  redis_port: "6379"
+  cache_ttl: "15"
+  connection_max_age: "60"
+  es_host: elasticsearch-master
+  es_port: "9200"
+  version: {{ .Values.configmap.version }}
