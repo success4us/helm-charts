@@ -35,4 +35,4 @@ nameOverride: ""
 fullnameOverride: ""
 ## @param clusterDomain Kubernetes Cluster Domain
 ##
-clusterDomain: dev.cluster.local
+clusterDomain: ${ENV}.cluster.local

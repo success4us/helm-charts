@@ -7,7 +7,7 @@ image:
   repository: phx.ocir.io/axk4nd7kqcb4/kafka-consumer
   pullPolicy: Always
   # Overrides the image tag whose default is the chart version.
-  tag: "bxa5hwa"
+  tag: "${BUILDRUN_HASH}"
 
 imagePullSecrets:
 - name: ocirsecret
