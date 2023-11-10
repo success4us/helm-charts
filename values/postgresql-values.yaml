@@ -18,6 +18,8 @@ global:
       username: "postgres"
       password: "postgres@123"
       database: "postgres"
+      port: "5432"
+      host: "postgresql.dev.svc.cluster.local"
       existingSecret: ""
       secretKeys:
         adminPasswordKey: ""
@@ -35,4 +37,4 @@ nameOverride: ""
 fullnameOverride: ""
 ## @param clusterDomain Kubernetes Cluster Domain
 ##
-clusterDomain: ${ENV}.cluster.local
+clusterDomain: dev.cluster.local

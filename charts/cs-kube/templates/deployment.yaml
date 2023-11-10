@@ -49,28 +49,28 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: database-secret
-                  key: db_username
+                  name: postgresql
+                  key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: database-secret
-                  key: db_password
+                  name: postgresql
+                  key: password
             - name: DATABASE_NAME
               valueFrom:
                 secretKeyRef:
-                  name: database-secret
-                  key:  db_name
+                  name: postgresql
+                  key:  name
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: database-secret
-                  key:  db_host
+                  name: postgresql
+                  key:  host
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: database-secret
-                  key:  db_port
+                  name: postgresql
+                  key:  port
             - name: SPARK_MODE
               value: cluster
               # valueFrom:

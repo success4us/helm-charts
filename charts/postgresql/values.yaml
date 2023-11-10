@@ -48,13 +48,13 @@ global:
 kubeVersion: ""
 ## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
 ##
-nameOverride: ""
+nameOverride: "postgres-db-s4"
 ## @param fullnameOverride String to fully override common.names.fullname template
 ##
 fullnameOverride: ""
 ## @param clusterDomain Kubernetes Cluster Domain
 ##
-clusterDomain: dev.cluster.local
+clusterDomain: s41.cluster.local
 ## @param extraDeploy Array of extra objects to deploy with the release (evaluated as a template)
 ##
 extraDeploy: []
